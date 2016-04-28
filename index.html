@@ -6,7 +6,6 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/css/reset.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.css">
     <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="https://d621cde4587c562960fbe230744f42dc2304ca4f.googledrive.com/host/0BxwayM8qQaCVX0w4RExCOVdhbzQ">
@@ -139,16 +138,10 @@
           to_date: params.endDate
         })
         .groupByUser(function(state, event){
-          if (state === undefined){
-            state = {eventTime: today, eventCount: 0} 
-          }
-          _.each(event, function(e) {
-            state.eventCount += 1;
-            if (e.time < state.eventTime) {
-              state.eventTime =  e.time;
-            }
-          });
-          return state
+            state = state || {"eventCount": 0, "eventTime":""};
+            state.eventCount = events.length;
+            state.eventTime = events[4].time
+            return state
         })
         // filter out days where a user sent < 5 events
         .filter(function(user) {
@@ -184,10 +177,7 @@
           // group each user's events by the day they were triggered,
           // and count how many events they sent each day
           .groupByUser(function(count, events) {
-            count = count || {"eventCount": 0, "eventTime":""};
-            count.eventCount = events.length;
-            count.eventTime = events[0].time
-            return count
+            
           })
           //filter out days where a user sent < 5 events
           .filter(function(user_count) {
@@ -307,7 +297,6 @@
             }else{}
         }], mixpanel.reducer.count());
         }
-
     </script>
     <script id="cq-monthly-new-users">
       
@@ -327,7 +316,7 @@
         .groupByUser(function(state, event){
           state = state || {eventTime: date, "eventTime":""} 
             state.eventCount = event.length
-            state.eventTime = event[0].time
+            state.eventTime = event[4].time
           return state
         })
         //filter out users with less than 5 events
@@ -845,6 +834,19 @@
             })
 
             $('#monthlyActiveUsers').highcharts({
+                exporting: {
+                  chartOptions: { // specific options for the exported image
+                      plotOptions: {
+                          series: {
+                              dataLabels: {
+                                  enabled: true
+                              }
+                          }
+                      }
+                  },
+                  scale: 3,
+                  fallbackToExportServer: false
+                },
                 title: {
                     text: 'Monthly Active Users'
                 },
@@ -971,7 +973,7 @@
                       },
                       series: [{
                           type: 'spline',
-                          name: 'New Monthly Users to Monthly Active User',
+                          name: 'New Monthly Users Over Monthly Active User',
                           data: data
                       }],
                        exporting: {
@@ -1051,7 +1053,7 @@
                   })
                   $('#weeklyNewUsers').highcharts({
                             title: {
-                                text: 'New Users Per Week:'
+                                text: 'New Users Per Week'
                             },
                             
                             xAxis: {
@@ -1102,7 +1104,7 @@
                             },
                             series: [{
                                 type: 'spline',
-                                name: 'New Weekly Users to Weekly Active User',
+                                name: 'New Weekly Users Over Weekly Active User',
                                 data: data
                             }],
                              exporting: {
@@ -1296,167 +1298,167 @@
                 var dauThisMonth = $('#cq-daily-active-thisMonth').html();
                 dauThisMonthScript = $.trim(dauThisMonth);
                 MP.api.custom_query(dauThisMonthScript).done(function(dauThisMonthresults) {
-                //set variables for week and days
-                var dayOfWeekThisMonth
-                var weekinMonthThisMonth
-     
-                var weekOneArray = [0,0,0,0,0,0,0]
-                var weekTwoArray = [0,0,0,0,0,0,0]
-                var weekThreeArray = [0,0,0,0,0,0,0]
-                var weekFourArray = [0,0,0,0,0,0,0]
-                var weekFiveArray = [0,0,0,0,0,0,0]
-                /*
-                need to find beginning of the month and day of week (sat, sun, thurs) for xAxis, then count to sunday, when sunday increment the week up one.
-                Additionally need to place each day's dau's in approiate day of week, and week in month slot
-                */
-                console.log(results)
-                console.log(results[0].key[0])
-                console.log(results[0].key[0].split("-")[1])
-                holder = parseFloat(dauThisMonthresults[0].key[0].split("-")[2])
-                weekinMonthThisMonth = (holder/7)
-                for (var i =0; i < dauThisMonthresults.length; i++) { 
-                  dayOfWeekThisMonth = moment(dauThisMonthresults[i].key[0]).day() 
-                  if (weekinMonthThisMonth > 0 && weekinMonthThisMonth <= 1) {
-                    if(dayOfWeekThisMonth === 0){
-                      weekOneArray[6] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 1){
-                      weekOneArray[0] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 2){
-                      weekOneArray[1] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 3){
-                      weekOneArray[2] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 4){
-                      weekOneArray[3] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 5){
-                      weekOneArray[4] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 6){
-                      weekOneArray[5] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else{}
-                  
-                  } else if (weekinMonthThisMonth > 1 && weekinMonthThisMonth <= 2) {
+                  //set variables for week and days
+                  var dayOfWeekThisMonth
+                  var weekinMonthThisMonth
        
-                    if(dayOfWeekThisMonth === 0){
-                      weekTwoArray[6] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 1){
-                      weekTwoArray[0] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 2){
-                      weekTwoArray[1] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 3){
-                      weekTwoArray[2] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 4){
-                      weekTwoArray[3] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 5){
-                      weekTwoArray[4] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 6){
-                      weekTwoArray[5] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else{}
-                  
-                  }else if (weekinMonthThisMonth > 2 && weekinMonthThisMonth <= 3) {
+                  var weekOneArray = [0,0,0,0,0,0,0]
+                  var weekTwoArray = [0,0,0,0,0,0,0]
+                  var weekThreeArray = [0,0,0,0,0,0,0]
+                  var weekFourArray = [0,0,0,0,0,0,0]
+                  var weekFiveArray = [0,0,0,0,0,0,0]
+                  /*
+                  need to find beginning of the month and day of week (sat, sun, thurs) for xAxis, then count to sunday, when sunday increment the week up one.
+                  Additionally need to place each day's dau's in approiate day of week, and week in month slot
+                  */
+                  console.log(results)
+                  console.log(results[0].key[0])
+                  console.log(results[0].key[0].split("-")[1])
+                  holder = parseFloat(dauThisMonthresults[0].key[0].split("-")[2])
+                  weekinMonthThisMonth = (holder/7)
+                  for (var i =0; i < dauThisMonthresults.length; i++) { 
+                    dayOfWeekThisMonth = moment(dauThisMonthresults[i].key[0]).day() 
+                    if (weekinMonthThisMonth > 0 && weekinMonthThisMonth <= 1) {
+                      if(dayOfWeekThisMonth === 0){
+                        weekOneArray[6] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 1){
+                        weekOneArray[0] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 2){
+                        weekOneArray[1] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 3){
+                        weekOneArray[2] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 4){
+                        weekOneArray[3] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 5){
+                        weekOneArray[4] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 6){
+                        weekOneArray[5] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else{}
+                    
+                    } else if (weekinMonthThisMonth > 1 && weekinMonthThisMonth <= 2) {
+         
+                      if(dayOfWeekThisMonth === 0){
+                        weekTwoArray[6] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 1){
+                        weekTwoArray[0] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 2){
+                        weekTwoArray[1] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 3){
+                        weekTwoArray[2] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 4){
+                        weekTwoArray[3] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 5){
+                        weekTwoArray[4] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 6){
+                        weekTwoArray[5] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else{}
+                    
+                    }else if (weekinMonthThisMonth > 2 && weekinMonthThisMonth <= 3) {
 
-                    if(dayOfWeekThisMonth === 0){
-                      weekThreeArray[6] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 1){
-                      weekThreeArray[0] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 2){
-                      weekThreeArray[1] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 3){
-                      weekThreeArray[2] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 4){
-                      weekThreeArray[3] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 5){
-                      weekThreeArray[4] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 6){
-                      weekThreeArray[5] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else{}
-                  
-                  }else if (weekinMonthThisMonth > 3 && weekinMonthThisMonth <= 4) {
+                      if(dayOfWeekThisMonth === 0){
+                        weekThreeArray[6] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 1){
+                        weekThreeArray[0] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 2){
+                        weekThreeArray[1] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 3){
+                        weekThreeArray[2] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 4){
+                        weekThreeArray[3] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 5){
+                        weekThreeArray[4] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 6){
+                        weekThreeArray[5] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else{}
+                    
+                    }else if (weekinMonthThisMonth > 3 && weekinMonthThisMonth <= 4) {
 
-                    if(dayOfWeekThisMonth === 0){
-                      weekFourArray[6] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 1){
-                      weekFourArray[0] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 2){
-                      weekFourArray[1] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 3){
-                      weekFourArray[2] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 4){
-                      weekFourArray[3] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 5){
-                      weekFourArray[4] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 6){
-                      weekFourArray[5] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else{}
-                  
-                  }else if(weekinMonthThisMonth > 5){
+                      if(dayOfWeekThisMonth === 0){
+                        weekFourArray[6] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 1){
+                        weekFourArray[0] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 2){
+                        weekFourArray[1] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 3){
+                        weekFourArray[2] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 4){
+                        weekFourArray[3] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 5){
+                        weekFourArray[4] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 6){
+                        weekFourArray[5] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else{}
+                    
+                    }else if(weekinMonthThisMonth > 5){
 
-                    if(dayOfWeekThisMonth === 0){
-                      weekFiveArray[6] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 1){
-                      weekFiveArray[0] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 2){
-                      weekFiveArray[1] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 3){
-                      weekFiveArray[2] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 4){
-                      weekFiveArray[3] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 5){
-                      weekFiveArray[4] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
-                    }else if(dayOfWeekThisMonth === 6){
-                      weekFiveArray[5] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      if(dayOfWeekThisMonth === 0){
+                        weekFiveArray[6] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 1){
+                        weekFiveArray[0] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 2){
+                        weekFiveArray[1] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 3){
+                        weekFiveArray[2] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 4){
+                        weekFiveArray[3] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 5){
+                        weekFiveArray[4] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else if(dayOfWeekThisMonth === 6){
+                        weekFiveArray[5] = (((dauThisMonthresults[i].value/monthlyresults[(numOfMonths-1)].value).toFixed(3))*100)
+                      }else{}
                     }else{}
-                  }else{}
-                  if (dayOfWeekThisMonth === 0) {
-                    weekinMonthThisMonth = weekinMonthThisMonth + 1;
-                  }
-                }
-                $('#dau-over-mau-graph-2').highcharts({
-                  title: {
-                      text: 'DAU\'s over MAU\'s This Month'
-                  },
-                  xAxis: {
-                      categories: ["Mon", "Tue", "Wed","Thu", "Fri", "Sat", "Sun"]
-                  },
-                  yAxis: {
-                    title: {
-                        text: '% DAU over MAU'
+                    if (dayOfWeekThisMonth === 0) {
+                      weekinMonthThisMonth = weekinMonthThisMonth + 1;
                     }
-                  },
-                  tooltip:{
-                    shared: true,
-                    valueDecimals: 1,
-                    valueSuffix: " %"
-                  },
-                  series: [{
-                      type: 'spline',
-                      name: 'Week One DAU\'s MAU\'s',
-                      data: weekOneArray
-                  },{
-                      type: 'spline',
-                      name: 'Week Two DAU\'s MAU\'s',
-                      data: weekTwoArray
-                  },{
-                      type: 'spline',
-                      name: 'Week Three DAU\'s MAU\'s',
-                      data: weekThreeArray
-                  },{
-                      type: 'spline',
-                      name: 'Week Four DAU\'s MAU\'s',
-                      data: weekFourArray
-                  },{
-                      type: 'spline',
-                      name: 'Week Five DAU\'s MAU\'s',
-                      data: weekFiveArray
-                  }],
-                  legend: {
-                  align: 'center',
-                  },
-                  exporting: {
-                    enabled: true
+                  }
+                  $('#dau-over-mau-graph-2').highcharts({
+                    title: {
+                        text: 'DAU\'s over MAU\'s This Month'
                     },
-                });
+                    xAxis: {
+                        categories: ["Mon", "Tue", "Wed","Thu", "Fri", "Sat", "Sun"]
+                    },
+                    yAxis: {
+                      title: {
+                          text: '% DAU over MAU'
+                      }
+                    },
+                    tooltip:{
+                      shared: true,
+                      valueDecimals: 1,
+                      valueSuffix: " %"
+                    },
+                    series: [{
+                        type: 'spline',
+                        name: 'Week One DAU\'s MAU\'s',
+                        data: weekOneArray
+                    },{
+                        type: 'spline',
+                        name: 'Week Two DAU\'s MAU\'s',
+                        data: weekTwoArray
+                    },{
+                        type: 'spline',
+                        name: 'Week Three DAU\'s MAU\'s',
+                        data: weekThreeArray
+                    },{
+                        type: 'spline',
+                        name: 'Week Four DAU\'s MAU\'s',
+                        data: weekFourArray
+                    },{
+                        type: 'spline',
+                        name: 'Week Five DAU\'s MAU\'s',
+                        data: weekFiveArray
+                    }],
+                    legend: {
+                    align: 'center',
+                    },
+                    exporting: {
+                      enabled: true
+                      },
+                  });
                 })
 
-                mixpanel.track("MPPlatform: custom report load time",{"SubName":"SE Dashboard","Author":"Bo","Version":"1"});
+                
                 
               })            
           })      
