@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="height: auto;">
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
@@ -7,8 +7,8 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.css">
     <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="https://d621cde4587c562960fbe230744f42dc2304ca4f.googledrive.com/host/0BxwayM8qQaCVX0w4RExCOVdhbzQ">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/ac3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="https://d621cde4587c562960fbe230744f42dc2304ca4f.googledrive.com/host/0BxwayM8qQaCVX0w4RExCOVdhbzQ">
     <link rel="stylesheet" type="text/css" href="https://a7fd22d7f1e3c3ec503950ff3eb0ca354866665d.googledrive.com/host/0BxwayM8qQaCVMk14UTA0V2JuSVU">
     <link rel="stylesheet" type="text/css" href="https://5a4961e5c9f1459a1c463234568af125d8e1b386.googledrive.com/host/0BxwayM8qQaCVRmRCSDlXUUtMMnc/">
     <link rel="stylesheet" type="text/css" href="https://201420392a7158f07d53a8f3e71606645ab03bd2.googledrive.com/host/0BxwayM8qQaCVQldvY2U5Um9FN3M">
@@ -17,10 +17,10 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.2.4/css/simple-line-icons.min.css">
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
   </head>
-  <body class="mixpanel-platform-body">
+  <body class="mixpanel-platform-body" style="height: auto">
     <div class="mixpanel-platform-section">
       <div class="content-wrapper">
-            <div class="content-heading text-center">
+            <div class="content-heading text-center clearfix">
                <!-- START Language list-->
                <div class="pull-right" style="bottom: 10px;">
                   <img src="https://d018d7277c9a2a72c253b637c4abe4d24d29449c.googledrive.com/host/0BxwayM8qQaCVOGZvekkxYTNSZVU" height="40px" width="120px">
@@ -102,20 +102,20 @@
                </div>
             </div>
 
-      <div style="clear: both;"></div>
-      <div class="actives" style="margin: auto; max-width: 98%;">
+      <!--<div style="clear: both;"></div>-->
+      <div class="actives clearfix" style="margin: auto; max-width: 98%;">
         <div style="float: left;  padding-top: 7px; padding-bottom: 7px; padding-right: 3px; max-width: 48%;" id="weeklyActiveUsers" align="right"></div>
         <div style="float: right;  padding-top: 7px; padding-bottom: 7px; padding-left: 3px; max-width: 48%;" id="monthlyActiveUsers" align="left"></div>
       </div>
-      <div class="newUsers" style="margin: auto; max-width: 98%;">
+      <div class="newUsers clearfix" style="margin: auto; max-width: 98%;">
         <div style="float: left;  padding-top: 7px; padding-bottom: 7px; padding-right: 3px; max-width: 48%;" id="weeklyNewUsers" align="right"></div>
         <div style="float: right;  padding-top: 7px; padding-bottom: 7px; padding-left: 3px; max-width: 48%;" id="monthlyNewUsers" align="left"></div>
       </div>
-      <div class="newUsersOverActiveUsers" style="margin: auto; max-width: 98%;">
+      <div class="newUsersOverActiveUsers clearfix" style="margin: auto; max-width: 98%;">
         <div style="float: left;  padding-top: 7px; padding-bottom: 7px; padding-right: 3px; max-width: 48%;"  id="weeklyActiveAndNewPercentage" align="right"></div>
         <div style="float: right;  padding-top: 7px; padding-bottom: 7px; padding-left: 3px; max-width: 48%;" id="MonthlyActiveAndNewPercentage" align="left"></div>
       </div>
-      <div class="DAUsMAUs" style="margin: auto; max-width: 98%;">
+      <div class="DAUsMAUs clearfix" style="margin: auto; max-width: 98%;">
         <div style="float: left;  padding-top: 7px; padding-bottom: 20px; padding-right: 3px; max-width: 48%;" id="dau-over-mau-graph" align="right"></div>
         <div style="float: right;  padding-top: 7px; padding-bottom: 20px; padding-left: 3px; max-width: 48%;" id="dau-over-mau-graph-2" align="left"></div>
       </div>
@@ -137,11 +137,13 @@
           from_date: params.startDate, 
           to_date: params.endDate
         })
-        .groupByUser(function(state, event){
-            state = state || {"eventCount": 0, "eventTime":""};
-            state.eventCount = events.length;
-            state.eventTime = events[4].time
-            return state
+        .groupByUser(function(count, events){
+            count = count || {"eventCount": 0, "eventTime":""};
+            count.eventCount = events.length;
+            if(events.length >= 5){
+              count.eventTime = events[4].time
+            }
+            return count
         })
         // filter out days where a user sent < 5 events
         .filter(function(user) {
@@ -177,7 +179,12 @@
           // group each user's events by the day they were triggered,
           // and count how many events they sent each day
           .groupByUser(function(count, events) {
-            
+            count = count || {"eventCount": 0, "eventTime":""};
+            count.eventCount = events.length;
+            if(events.length >= 5){
+              count.eventTime = events[4].time
+            }
+            return count
           })
           //filter out days where a user sent < 5 events
           .filter(function(user_count) {
@@ -313,11 +320,13 @@
           from_date: params.startDate, 
           to_date: params.endDate
         })
-        .groupByUser(function(state, event){
-          state = state || {eventTime: date, "eventTime":""} 
-            state.eventCount = event.length
-            state.eventTime = event[4].time
-          return state
+        .groupByUser(function(count, events){
+            count = count || {"eventCount": 0, "eventTime":""};
+            count.eventCount = events.length;
+            if(events.length >= 5){
+              count.eventTime = events[4].time
+            }
+            return count
         })
         //filter out users with less than 5 events
         .filter(function(user){
@@ -603,7 +612,7 @@
           var newUsersTodayScript = $('#cq-new-users-today').html();
           newUsersTodayScript = $.trim(newUsersTodayScript);
     
-          MP.api.custom_query(newUsersTodayScript).done(function(results) {
+          MP.api.jql(newUsersTodayScript).done(function(results) {
             var holder = results[0].key[0]
             if(holder !== "Old Users"){
               $('.current-users').text(addCommas(results[0].value)); 
@@ -702,6 +711,9 @@
                               }
                           }]
                       },
+                      credits: {
+                          enabled: false
+                      },
                       series: [{
                           type: 'column',
                           name: eventsArray[0],
@@ -788,7 +800,7 @@
           var dailyActives = $('#cq-daily-active-thisMonth').html();
           dailyActivesScript = $.trim(dailyActives);
 
-          dailyActivesQuery = MP.api.custom_query(dailyActivesScript).done(function (data) {
+          dailyActivesQuery = MP.api.jql(dailyActivesScript).done(function (data) {
             var todayDailyActive =  (data.length - 1)
             var activesToday =  data[todayDailyActive].value
             $('.daily-actives').text(addCommas(activesToday));
@@ -819,7 +831,7 @@
           var placeholderArray = []
           var monthlyUniquesYAxis =[]
           var monthlyUniquesXAxis =[]
-          MP.api.custom_query(newMonthlyActiveUserScript).done(function(results) {
+          MP.api.jql(newMonthlyActiveUserScript).done(function(results) {
 
             var monthlyActivesTopBar = (results.length - 1)
             var monthlyActivesToday =  results[monthlyActivesTopBar].value
@@ -847,6 +859,9 @@
                   scale: 3,
                   fallbackToExportServer: false
                 },
+                credits: {
+                        enabled: false
+                },
                 title: {
                     text: 'Monthly Active Users'
                 },
@@ -860,7 +875,7 @@
                 },
                 series: [{
                     type: 'spline',
-                    name: 'Monthly Acitive Users',
+                    name: 'Monthly Active Users',
                     data: monthlyUniquesYAxis
                 }],
                  exporting: {
@@ -873,7 +888,7 @@
             var newMonthlyNewUserScript = $('#cq-monthly-new-users').html();
             newMonthlyNewUserScript = $.trim(newMonthlyNewUserScript);
 
-            MP.api.custom_query(newMonthlyNewUserScript).done(function(results) {
+            MP.api.jql(newMonthlyNewUserScript).done(function(results) {
               //sorting and set up for new users by months chart
               $.each(results, function(index, value){
                 monthlyNewUserxAxis.push(value.key[0])
@@ -909,6 +924,9 @@
               $('#monthlyNewUsers').highcharts({
                         title: {
                             text: 'New Users Per Month'
+                        },
+                        credits: {
+                          enabled: false
                         },
                         xAxis: {
                             categories: monthlyNewUserxAxis
@@ -957,7 +975,9 @@
                       title: {
                           text: 'New Monthly Users Over Monthly Active User'
                       },
-                      
+                      credits: {
+                          enabled: false
+                      },
                       xAxis: {
                           categories: monthlyNewUserxAxis
                       },
@@ -993,7 +1013,7 @@
           var weeklyUniquesXAxis =[]
           // 12 week query for Uniques 
           
-          MP.api.custom_query(newWeeklyActiveUsersScript).done(function(results) {
+          MP.api.jql(newWeeklyActiveUsersScript).done(function(results) {
             $.each(results, function(index, value){
               if (value.key[0] !== null) {
 
@@ -1011,6 +1031,9 @@
               title: {
                   text: 'Weekly Active Users'
               },
+              credits: {
+                          enabled: false
+              },
               xAxis: {
                   categories: weeklyUniquesXAxis
               },
@@ -1021,7 +1044,7 @@
               },
               series: [{
                   type: 'spline',
-                  name: 'Weekly Acitive Users',
+                  name: 'Weekly Active Users',
                   data: weeklyUniquesYAxis
               }],
                exporting: {
@@ -1036,7 +1059,7 @@
             var newWeeklyNewUserScript = $('#cq-weekly-new-users').html();
             newWeeklyNewUserScript = $.trim(newWeeklyNewUserScript);
 
-            MP.api.custom_query(newWeeklyNewUserScript).done(function(results) {
+            MP.api.jql(newWeeklyNewUserScript).done(function(results) {
                   console.log("weekly new users results")
                   console.log(results)
                   var weeklyNewUserxAxis =[]
@@ -1088,7 +1111,9 @@
                             title: {
                                 text: 'New Weekly Users Over Weekly Active User'
                             },
-                            
+                            credits: {
+                                enabled: false
+                            },
                             xAxis: {
                                 categories: weeklyNewUserxAxis
                             },
@@ -1126,7 +1151,7 @@
           var monthlyUniquesYAxis =[]
           var monthlyUniquesXAxis =[]
           //using same query to get mau for the last 6 months
-          MP.api.custom_query(monthlyActiveUserScript).done(function(monthlyresults) {
+          MP.api.jql(monthlyActiveUserScript).done(function(monthlyresults) {
 
              //Uniques for this month by day
               var lastMonthUniquesbyDayQueryResults = []
@@ -1142,7 +1167,7 @@
               newUsersTodayScript = $.trim(newUsersTodayScript);
         
               //dau query last month daus
-              MP.api.custom_query(newUsersTodayScript).done(function(results) {
+              MP.api.jql(newUsersTodayScript).done(function(results) {
                  //set variables for week and days
                 var dayOfWeek 
                 var weekinMonth 
@@ -1260,6 +1285,9 @@
                         text: '% DAU over MAU'
                     }
                   },
+                  credits: {
+                      enabled: false
+                  },
                   tooltip:{
                     shared: true,
                     valueDecimals: 1,
@@ -1297,7 +1325,7 @@
                 //dau for this month
                 var dauThisMonth = $('#cq-daily-active-thisMonth').html();
                 dauThisMonthScript = $.trim(dauThisMonth);
-                MP.api.custom_query(dauThisMonthScript).done(function(dauThisMonthresults) {
+                MP.api.jql(dauThisMonthScript).done(function(dauThisMonthresults) {
                   //set variables for week and days
                   var dayOfWeekThisMonth
                   var weekinMonthThisMonth
@@ -1423,6 +1451,9 @@
                           text: '% DAU over MAU'
                       }
                     },
+                    credits: {
+                          enabled: false
+                    },
                     tooltip:{
                       shared: true,
                       valueDecimals: 1,
@@ -1524,8 +1555,6 @@
 
       $(document).ready(function() {
         allQueries()
-        mixpanel.track("MPPlatform: custom report viewed",{"SubName":"SE Dashboard","Author":"Bo","Version":"1"})
-        mixpanel.time_event("MPPlatform: custom report load time");
       })
 
       
